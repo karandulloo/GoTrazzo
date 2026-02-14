@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:qr_flutter/qr_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
+import '../../../core/config/app_config.dart';
 import '../../../core/services/order_service.dart';
 import '../../../shared/models/order.dart';
 import '../../../shared/models/order_item.dart';
@@ -148,6 +150,13 @@ class _OrderDetailScreenState extends ConsumerState<OrderDetailScreen> {
                     ),
                   ),
                 ],
+                if ((order.isRiderAssigned || order.isInTransit) &&
+                    order.totalAmount != null &&
+                    AppConfig.upiVpa.isNotEmpty &&
+                    !AppConfig.upiVpa.startsWith('YOUR_')) ...[
+                  const SizedBox(height: 24),
+                  _payOnDeliverySection(order),
+                ],
               ],
             ),
           );
@@ -189,6 +198,57 @@ class _OrderDetailScreenState extends ConsumerState<OrderDetailScreen> {
           const SizedBox(height: 4),
           Text(value, style: const TextStyle(fontSize: 16)),
         ],
+      ),
+    );
+  }
+
+  Widget _payOnDeliverySection(Order order) {
+    final amount = order.totalAmount!;
+    final vpa = AppConfig.upiVpa;
+    final name = AppConfig.upiPayeeName;
+    final upiString =
+        'upi://pay?pa=${Uri.encodeComponent(vpa)}&pn=${Uri.encodeComponent(name)}&am=${amount.toStringAsFixed(2)}&cu=INR';
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Icon(Icons.qr_code_2, size: 24, color: Theme.of(context).primaryColor),
+            const SizedBox(height: 8),
+            Text(
+              'Pay on delivery',
+              style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
+            ),
+            const SizedBox(height: 4),
+            Text(
+              'Scan QR to pay ₹${amount.toStringAsFixed(2)}',
+              style: TextStyle(color: Colors.grey[600], fontSize: 14),
+            ),
+            const SizedBox(height: 16),
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(8),
+                border: Border.all(color: Colors.grey.shade300),
+              ),
+              child: QrImageView(
+                data: upiString,
+                version: QrVersions.auto,
+                size: 180,
+                backgroundColor: Colors.white,
+              ),
+            ),
+            const SizedBox(height: 12),
+            Text(
+              'Or pay to $vpa',
+              style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+            ),
+          ],
+        ),
       ),
     );
   }

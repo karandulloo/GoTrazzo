@@ -1,0 +1,18 @@
+package com.trazzo.repository;
+
+import com.trazzo.model.Chat;
+import com.trazzo.model.Message;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
+import java.util.List;
+
+@Repository
+public interface MessageRepository extends JpaRepository<Message, Long> {
+
+    List<Message> findByChatOrderBySentAtAsc(Chat chat);
+
+    List<Message> findByChatIdOrderBySentAtAsc(Long chatId);
+
+    long countByChatAndIsReadFalse(Chat chat);
+}

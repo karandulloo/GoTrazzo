@@ -61,8 +61,8 @@
 
 **For iOS:**
 1. Get API key from [Google Cloud Console](https://console.cloud.google.com/)
-2. Edit `ios/Runner/AppDelegate.swift`
-3. Replace `YOUR_GOOGLE_MAPS_API_KEY` with your actual key
+2. Copy `ios/Runner/GoogleMaps-Key.xcconfig.example` to `GoogleMaps-Key.xcconfig`
+3. Replace `YOUR_GOOGLE_MAPS_API_KEY` with your actual key in `GoogleMaps-Key.xcconfig`
 
 **For Android:**
 1. Get API key from [Google Cloud Console](https://console.cloud.google.com/)

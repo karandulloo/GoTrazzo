@@ -28,7 +28,7 @@ End-to-end testing for **auth**, **customer**, **business**, **chat**, **Make an
   flutter run -d <your-iphone-device-id>
   ```
 - **API URL**: In `lib/core/config/app_config.dart`, `devApiBaseUrl` must point to your Mac’s IP (e.g. `http://192.168.1.6:8080`), not `localhost`, when testing on a physical device.
-- **Google Maps**: If you use maps, set the API key in `ios/Runner/AppDelegate.swift`.
+- **Google Maps**: If you use maps, create `ios/Runner/GoogleMaps-Key.xcconfig` from the .example file.
 
 ### 3. Network
 - iPhone and Mac on the **same Wi‑Fi**.
@@ -229,7 +229,7 @@ End-to-end testing for **auth**, **customer**, **business**, **chat**, **Make an
 - At least one **Rider** user registered. **Accept offer** creates the order and assigns a rider immediately; if none are available, the request fails.
 
 ### Maps blank (if used)
-- Google Maps API key set in `ios/Runner/AppDelegate.swift`.
+- Google Maps API key set in `ios/Runner/GoogleMaps-Key.xcconfig` (gitignored).
 - Maps SDK enabled for the key.
 
 ---

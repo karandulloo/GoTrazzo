@@ -1,13 +1,29 @@
 # Google Maps API Key Setup - Quick Guide
 
-## ✅ API Key Added to App
+## 🔒 **Secure API Key Setup (Required)**
 
-Your API key has been added to:
-- `ios/Runner/AppDelegate.swift`
+**IMPORTANT:** API keys must never be committed to git. Use this secure approach:
+
+### Step 1: Create your API key file
+
+1. Go to `mobile/trazzo_app/ios/Runner/`
+2. Copy the example file:
+   ```bash
+   cp GoogleMaps-Key.xcconfig.example GoogleMaps-Key.xcconfig
+   ```
+3. Edit `GoogleMaps-Key.xcconfig` and replace `YOUR_GOOGLE_MAPS_API_KEY` with your actual key
+
+**Note:** `GoogleMaps-Key.xcconfig` is in `.gitignore` - it will never be committed.
+
+### Step 2: If you received a Google security warning (exposed key)
+
+1. **Regenerate** your API key in [Google Cloud Console](https://console.cloud.google.com/) → APIs & Services → Credentials
+2. Edit the leaked key → Click **Regenerate Key**
+3. Use the new key in `GoogleMaps-Key.xcconfig` (never use the old compromised key)
 
 ---
 
-## 🔧 **NEXT STEPS: Enable APIs in Google Cloud Console**
+## 🔧 **Enable APIs in Google Cloud Console**
 
 ### Step 1: Go to Google Cloud Console
 1. Visit: https://console.cloud.google.com/
@@ -71,7 +87,7 @@ Enable these APIs:
 
 ## ✅ **Verification Checklist**
 
-- [ ] API key added to AppDelegate.swift ✅
+- [ ] Created GoogleMaps-Key.xcconfig from example
 - [ ] Maps SDK for iOS enabled
 - [ ] Places API enabled (optional but recommended)
 - [ ] Geocoding API enabled (optional but recommended)
@@ -100,7 +116,7 @@ Enable these APIs:
 ## 🐛 **Troubleshooting**
 
 ### Map Still Blank?
-1. Check API key is correct in AppDelegate.swift
+1. Check API key is in GoogleMaps-Key.xcconfig (copy from .example if needed)
 2. Verify Maps SDK for iOS is enabled
 3. Check API key restrictions (should allow Maps SDK)
 4. Restart app after changes

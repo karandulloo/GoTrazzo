@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../core/services/auth_service.dart';
+import '../../../core/services/location_service.dart';
 import '../../../core/services/order_service.dart';
 import '../../../core/services/rider_service.dart';
 import '../../../core/utils/token_storage.dart';
@@ -30,6 +31,14 @@ class _RiderHomeScreenState extends ConsumerState<RiderHomeScreen> {
     setState(() => _statusLoading = true);
     try {
       await ref.read(riderServiceProvider).updateStatus(uid, s);
+      // When going Available, send current location so backend can assign orders to this rider
+      if (s == 'AVAILABLE') {
+        try {
+          final loc = await LocationService().getCurrentLocation();
+          await ref.read(riderServiceProvider).updateLocation(
+                uid, loc['latitude']!, loc['longitude']!);
+        } catch (_) {}
+      }
       setState(() {
         _status = s;
         _statusLoading = false;
@@ -120,12 +129,12 @@ class _RiderHomeScreenState extends ConsumerState<RiderHomeScreen> {
                           ),
                     ),
                     const SizedBox(height: 12),
-                    Row(
+                    Wrap(
+                      spacing: 8,
+                      runSpacing: 8,
                       children: [
                         _statusChip('AVAILABLE', Icons.check_circle),
-                        const SizedBox(width: 8),
                         _statusChip('BUSY', Icons.hourglass_empty),
-                        const SizedBox(width: 8),
                         _statusChip('OFFLINE', Icons.cancel),
                       ],
                     ),

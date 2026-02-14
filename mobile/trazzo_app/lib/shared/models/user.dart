@@ -10,7 +10,9 @@ class User {
   
   // Customer-specific
   final String? deliveryAddress;
-  
+  final double? defaultDeliveryLatitude;
+  final double? defaultDeliveryLongitude;
+
   // Business-specific
   final String? businessName;
   final String? businessDescription;
@@ -30,6 +32,8 @@ class User {
     required this.role,
     this.profileImageUrl,
     this.deliveryAddress,
+    this.defaultDeliveryLatitude,
+    this.defaultDeliveryLongitude,
     this.businessName,
     this.businessDescription,
     this.latitude,
@@ -48,6 +52,8 @@ class User {
       role: UserRole.fromString(json['role'] ?? 'CUSTOMER'),
       profileImageUrl: json['profileImageUrl'],
       deliveryAddress: json['deliveryAddress'],
+      defaultDeliveryLatitude: json['defaultDeliveryLatitude']?.toDouble(),
+      defaultDeliveryLongitude: json['defaultDeliveryLongitude']?.toDouble(),
       businessName: json['businessName'],
       businessDescription: json['businessDescription'],
       latitude: json['latitude']?.toDouble(),
@@ -67,6 +73,8 @@ class User {
       'role': role.value,
       'profileImageUrl': profileImageUrl,
       'deliveryAddress': deliveryAddress,
+      'defaultDeliveryLatitude': defaultDeliveryLatitude,
+      'defaultDeliveryLongitude': defaultDeliveryLongitude,
       'businessName': businessName,
       'businessDescription': businessDescription,
       'latitude': latitude,

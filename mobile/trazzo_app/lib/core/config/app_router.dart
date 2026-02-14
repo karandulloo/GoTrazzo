@@ -9,6 +9,7 @@ import '../../features/customer/screens/chat_screen.dart';
 import '../../features/customer/screens/order_create_screen.dart';
 import '../../features/customer/screens/order_list_screen.dart';
 import '../../features/customer/screens/order_detail_screen.dart';
+import '../../features/customer/screens/customer_address_screen.dart';
 import '../../features/business/screens/business_home_screen.dart';
 import '../../features/business/screens/business_onboarding_screen.dart';
 import '../../features/business/screens/business_chat_screen.dart';
@@ -70,6 +71,10 @@ final routerProvider = Provider<GoRouter>((ref) {
               final businessId = int.parse(state.pathParameters['businessId']!);
               return ChatScreen(businessId: businessId);
             },
+          ),
+          GoRoute(
+            path: 'address',
+            builder: (context, state) => const CustomerAddressScreen(),
           ),
           GoRoute(
             path: 'orders',

@@ -1,50 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'dart:async';
-import '../../../core/services/business_service.dart';
-import '../../../core/services/location_service.dart';
 import '../../../core/services/auth_service.dart';
 import '../../../shared/models/business.dart';
-
-// Provider for current location with fallback - NEVER FAILS
-final currentLocationProvider = FutureProvider<Map<String, double>>((ref) async {
-  // Default location (Bangalore) - will be used if location fails
-  const defaultLocation = {'latitude': 12.9716, 'longitude': 77.5946};
-  
-  try {
-    final locationService = LocationService();
-    
-    // Try to get location with aggressive timeout
-    final location = await Future.any([
-      locationService.getCurrentLocation(),
-      Future.delayed(const Duration(seconds: 5), () => throw TimeoutException('Location timeout')),
-    ]);
-    
-    return location;
-  } on TimeoutException {
-    // Timeout - use default location
-    return defaultLocation;
-  } catch (e) {
-    // Any error - use default location (permission denied, GPS off, etc.)
-    // This ensures the app NEVER gets stuck
-    return defaultLocation;
-  }
-});
-
-// Provider for nearby businesses - using a stable key to prevent infinite loops
-final nearbyBusinessesProvider = FutureProvider.family<List<Business>, String>((ref, locationKey) async {
-  // Parse location from key format: "lat_lng"
-  final parts = locationKey.split('_');
-  final latitude = double.parse(parts[0]);
-  final longitude = double.parse(parts[1]);
-  
-  final businessService = ref.watch(businessServiceProvider);
-  return await businessService.findNearbyBusinesses(
-    latitude: latitude,
-    longitude: longitude,
-  );
-});
+import '../providers.dart';
 
 class CustomerHomeScreen extends ConsumerStatefulWidget {
   const CustomerHomeScreen({super.key});
@@ -93,12 +52,17 @@ class _CustomerHomeScreenState extends ConsumerState<CustomerHomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final locationAsync = ref.watch(currentLocationProvider);
+    final locationAsync = ref.watch(customerSearchLocationProvider);
     
     return Scaffold(
       appBar: AppBar(
         title: const Text('Nearby Businesses'),
         actions: [
+          IconButton(
+            icon: const Icon(Icons.location_on_outlined),
+            tooltip: 'My address',
+            onPressed: () => context.push('/customer/address'),
+          ),
           IconButton(
             icon: const Icon(Icons.receipt_long),
             tooltip: 'My Orders',
@@ -189,8 +153,8 @@ class _CustomerHomeScreenState extends ConsumerState<CustomerHomeScreen> {
                   Expanded(
                     child: RefreshIndicator(
                       onRefresh: () async {
-                        // Invalidate with the current location key
-                        final location = ref.read(currentLocationProvider).value;
+                        ref.invalidate(customerSearchLocationProvider);
+                        final location = ref.read(customerSearchLocationProvider).value;
                         if (location != null) {
                           final locationKey = '${location['latitude']}_${location['longitude']}';
                           ref.invalidate(nearbyBusinessesProvider(locationKey));

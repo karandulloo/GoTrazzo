@@ -35,12 +35,12 @@ class BusinessDetailsScreen extends ConsumerWidget {
                 // Business Image/Icon
                 Container(
                   height: 200,
-                  color: Colors.blue[100],
+                  color: Theme.of(context).colorScheme.primary.withOpacity(0.12),
                   child: Center(
                     child: Icon(
                       Icons.store,
                       size: 80,
-                      color: Colors.blue[700],
+                      color: Theme.of(context).colorScheme.primary,
                     ),
                   ),
                 ),

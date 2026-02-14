@@ -18,6 +18,11 @@ public class UserResponse {
     private UserRole role;
     private String profileImageUrl;
 
+    // Customer fields (default delivery address for "nearby" and orders)
+    private String deliveryAddress;
+    private Double defaultDeliveryLatitude;
+    private Double defaultDeliveryLongitude;
+
     // Business fields
     private String businessName;
     private String businessDescription;

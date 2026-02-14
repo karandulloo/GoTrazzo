@@ -63,6 +63,12 @@ public class User implements UserDetails {
     @Column(name = "delivery_address")
     private String deliveryAddress;
 
+    @Column(name = "default_delivery_latitude")
+    private Double defaultDeliveryLatitude;
+
+    @Column(name = "default_delivery_longitude")
+    private Double defaultDeliveryLongitude;
+
     // Business-specific fields
     @Column(name = "business_name")
     private String businessName;

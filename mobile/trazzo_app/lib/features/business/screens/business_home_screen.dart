@@ -304,7 +304,7 @@ class _BusinessHomeScreenState extends ConsumerState<BusinessHomeScreen> {
                   icon: Icons.chat_bubble_outline,
                   title: 'Active Chats',
                   value: '0',
-                  color: Colors.blue,
+                  color: Theme.of(context).colorScheme.primary,
                 ),
               ),
               const SizedBox(width: 12),

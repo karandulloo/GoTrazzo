@@ -1,8 +1,8 @@
-class AppConfig {
+  class AppConfig {
   // Development - Use your Mac's IP address when testing on physical iPhone
   // Find it with: ifconfig | grep "inet " | grep -v 127.0.0.1
-  static const String devApiBaseUrl = 'http://192.168.1.6:8080';
-  static const String devWebSocketUrl = 'ws://192.168.1.6:8080/ws';
+  static const String devApiBaseUrl = 'http://192.168.29.141:8080';
+  static const String devWebSocketUrl = 'ws://192.168.29.141:8080/ws';
   
   // Production (update when deploying)
   static const String prodApiBaseUrl = 'https://api.trazzo.com';
@@ -25,6 +25,6 @@ class AppConfig {
 
   // UPI Pay on delivery - your personal VPA for receiving payments
   // Set your UPI ID (e.g. you@paytm, you@ybl, you@okaxis) and display name
-  static const String upiVpa = 'YOUR_UPI_ID@paytm'; // e.g. john.doe@paytm
+  static const String upiVpa = '6006929439@ybl'; // e.g. john.doe@paytm
   static const String upiPayeeName = 'Trazzo'; // Name shown to customer in UPI app
 }

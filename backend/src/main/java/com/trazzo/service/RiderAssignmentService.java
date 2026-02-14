@@ -4,6 +4,7 @@ import com.trazzo.model.Order;
 import com.trazzo.model.User;
 import com.trazzo.model.enums.OrderStatus;
 import com.trazzo.model.enums.RiderStatus;
+import com.trazzo.model.enums.UserRole;
 import com.trazzo.repository.OrderRepository;
 import com.trazzo.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -13,6 +14,7 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -42,8 +44,16 @@ public class RiderAssignmentService {
                 businessLocation,
                 radiusDegrees);
 
+        // Fallback: if no rider with location in range, assign any AVAILABLE rider (e.g. they just went Available but app hasn't sent location yet)
         if (riderOpt.isEmpty()) {
-            throw new RuntimeException("No available riders found");
+            List<User> anyAvailable = userRepository.findByRoleAndRiderStatus(UserRole.RIDER, RiderStatus.AVAILABLE);
+            riderOpt = anyAvailable.isEmpty() ? Optional.empty() : Optional.of(anyAvailable.get(0));
+        }
+
+        if (riderOpt.isEmpty()) {
+            // No rider available: leave order without rider, status stays PAYMENT_CONFIRMED
+            order.setStatus(OrderStatus.PAYMENT_CONFIRMED);
+            return orderRepository.save(order);
         }
 
         User rider = riderOpt.get();

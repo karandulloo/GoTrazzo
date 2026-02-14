@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../core/services/auth_service.dart';
 import '../../../shared/models/user_role.dart';
+import '../../../shared/widgets/trazzo_logo.dart';
 
 class LoginScreen extends ConsumerStatefulWidget {
   const LoginScreen({super.key});
@@ -80,22 +81,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  // Logo/Title
-                  const Icon(
-                    Icons.delivery_dining,
-                    size: 80,
-                    color: Color(0xFF2196F3),
-                  ),
-                  const SizedBox(height: 16),
-                  const Text(
-                    'Trazzo Delivery',
-                    style: TextStyle(
-                      fontSize: 32,
-                      fontWeight: FontWeight.bold,
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
-                  const SizedBox(height: 8),
+                  const TrazzoLogo(size: LogoSize.large, showTagline: true),
+                  const SizedBox(height: 24),
                   Text(
                     'Login to continue',
                     style: TextStyle(

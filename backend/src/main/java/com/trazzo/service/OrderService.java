@@ -193,6 +193,7 @@ public class OrderService {
         return orderRepository.findByBusinessIdOrderByCreatedAtDesc(businessId);
     }
 
+    @Transactional(readOnly = true)
     public List<Order> getRiderOrders(Long riderId) {
         return orderRepository.findByRiderIdOrderByCreatedAtDesc(riderId);
     }

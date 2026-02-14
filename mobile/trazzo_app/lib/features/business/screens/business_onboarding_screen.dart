@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import '../../../core/services/business_service.dart';
 import '../../../core/services/location_service.dart';
+import '../../../shared/widgets/map_picker_screen.dart';
 
 class BusinessOnboardingScreen extends ConsumerStatefulWidget {
   const BusinessOnboardingScreen({super.key});
@@ -60,6 +62,31 @@ class _BusinessOnboardingScreenState extends ConsumerState<BusinessOnboardingScr
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Error getting location: ${e.toString()}')),
+        );
+      }
+    }
+  }
+
+  Future<void> _openMapPicker() async {
+    final initialLat = _latitude ?? 12.9716;
+    final initialLng = _longitude ?? 77.5946;
+    final result = await Navigator.of(context).push<LatLng>(
+      MaterialPageRoute<LatLng>(
+        builder: (context) => MapPickerScreen(
+          initialLatitude: initialLat,
+          initialLongitude: initialLng,
+          title: 'Business location',
+        ),
+      ),
+    );
+    if (result != null && mounted) {
+      setState(() {
+        _latitude = result.latitude;
+        _longitude = result.longitude;
+      });
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Location set from map')),
         );
       }
     }
@@ -168,7 +195,7 @@ class _BusinessOnboardingScreenState extends ConsumerState<BusinessOnboardingScr
               
               // Category Dropdown
               DropdownButtonFormField<String>(
-                initialValue: _selectedCategory,
+                value: _selectedCategory,
                 decoration: const InputDecoration(
                   labelText: 'Category *',
                   prefixIcon: Icon(Icons.category),
@@ -203,24 +230,45 @@ class _BusinessOnboardingScreenState extends ConsumerState<BusinessOnboardingScr
               ),
               const SizedBox(height: 8),
               Text(
-                'Set your business location so customers can find you',
+                'Set your business location so customers can find you. Use current location or pick on map.',
                 style: TextStyle(color: Colors.grey[600]),
               ),
               const SizedBox(height: 12),
-              
-              ElevatedButton.icon(
-                onPressed: _getCurrentLocation,
-                icon: const Icon(Icons.location_on),
-                label: Text(
-                  _latitude != null && _longitude != null
-                      ? 'Location: ${_latitude!.toStringAsFixed(4)}, ${_longitude!.toStringAsFixed(4)}'
-                      : 'Set Business Location',
-                ),
-                style: ElevatedButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(vertical: 12),
-                  minimumSize: const Size(double.infinity, 48),
-                ),
+              Row(
+                children: [
+                  Expanded(
+                    child: OutlinedButton.icon(
+                      onPressed: _getCurrentLocation,
+                      icon: const Icon(Icons.my_location),
+                      label: const Text('Use current location'),
+                      style: OutlinedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(vertical: 12),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: OutlinedButton.icon(
+                      onPressed: _openMapPicker,
+                      icon: const Icon(Icons.map),
+                      label: const Text('Set on map'),
+                      style: OutlinedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(vertical: 12),
+                      ),
+                    ),
+                  ),
+                ],
               ),
+              if (_latitude != null && _longitude != null) ...[
+                const SizedBox(height: 8),
+                Text(
+                  'Selected: ${_latitude!.toStringAsFixed(4)}, ${_longitude!.toStringAsFixed(4)}',
+                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                        color: Colors.grey[600],
+                        fontFamily: 'monospace',
+                      ),
+                ),
+              ],
               const SizedBox(height: 24),
               
               // Error message

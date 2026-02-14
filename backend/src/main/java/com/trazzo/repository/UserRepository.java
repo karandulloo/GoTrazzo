@@ -28,6 +28,11 @@ public interface UserRepository extends JpaRepository<User, Long> {
         List<User> findByRole(UserRole role);
 
         /**
+         * Find available riders (any), optionally with location. Used as fallback when no rider has location set.
+         */
+        List<User> findByRoleAndRiderStatus(UserRole role, RiderStatus riderStatus);
+
+        /**
          * Find businesses within a given distance (in meters).
          * Uses native SQL with PostGIS ST_DWithin with geography casting.
          * ST_DWithin is more efficient than ST_Distance for proximity queries.

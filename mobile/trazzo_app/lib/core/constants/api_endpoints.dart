@@ -6,6 +6,7 @@ class ApiEndpoints {
   static const String login = '/api/auth/login';
   
   // Customer
+  static const String customerProfile = '/api/customer/profile';
   static const String nearbyBusinesses = '/api/customer/businesses/nearby';
   static String businessDetails(int id) => '/api/customer/businesses/$id';
   

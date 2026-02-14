@@ -1,28 +1,26 @@
 import 'package:dio/dio.dart';
 import '../config/app_config.dart';
-import '../../core/utils/token_storage.dart';
+import '../utils/token_storage.dart';
 
 class ApiService {
   late final Dio _dio;
-  
+
   ApiService() {
     _dio = Dio(
       BaseOptions(
         baseUrl: AppConfig.apiBaseUrl,
-        connectTimeout: const Duration(seconds: 10), // Reduced from 30 to 10 seconds
-        receiveTimeout: const Duration(seconds: 10), // Reduced from 30 to 10 seconds
+        connectTimeout: Duration(seconds: AppConfig.apiTimeoutSeconds),
+        receiveTimeout: Duration(seconds: AppConfig.apiTimeoutSeconds),
         headers: {
           'Content-Type': 'application/json',
           'Accept': 'application/json',
         },
       ),
     );
-    
-    // Add interceptor for authentication
+
     _dio.interceptors.add(
       InterceptorsWrapper(
         onRequest: (options, handler) async {
-          // Add access token to headers if available
           final token = await TokenStorage.getAccessToken();
           if (token != null && token.isNotEmpty) {
             options.headers['Authorization'] = 'Bearer $token';
@@ -30,12 +28,9 @@ class ApiService {
           return handler.next(options);
         },
         onError: (error, handler) async {
-          // Handle 401 Unauthorized - token expired
           if (error.response?.statusCode == 401) {
-            // Try to refresh token
             final refreshed = await _refreshToken();
             if (refreshed) {
-              // Retry the original request
               final opts = error.requestOptions;
               final token = await TokenStorage.getAccessToken();
               if (token != null) {
@@ -48,7 +43,6 @@ class ApiService {
                 }
               }
             }
-            // If refresh failed, clear tokens and redirect to login
             await TokenStorage.clearTokens();
           }
           return handler.next(error);
@@ -56,92 +50,69 @@ class ApiService {
       ),
     );
   }
-  
-  // Refresh token logic (to be implemented with refresh endpoint)
+
   Future<bool> _refreshToken() async {
     try {
       final refreshToken = await TokenStorage.getRefreshToken();
       if (refreshToken == null) return false;
-      
-      // TODO: Implement refresh token endpoint call
-      // For now, return false
+      // TODO: Implement refresh token endpoint
       return false;
     } catch (e) {
       return false;
     }
   }
-  
-  // GET request
+
   Future<Response> get(
     String path, {
     Map<String, dynamic>? queryParameters,
     Options? options,
   }) async {
-    try {
-      return await _dio.get(
-        path,
-        queryParameters: queryParameters,
-        options: options,
-      );
-    } catch (e) {
-      rethrow;
-    }
+    return await _dio.get(
+      path,
+      queryParameters: queryParameters,
+      options: options,
+    );
   }
-  
-  // POST request
+
   Future<Response> post(
     String path, {
     dynamic data,
     Map<String, dynamic>? queryParameters,
     Options? options,
   }) async {
-    try {
-      return await _dio.post(
-        path,
-        data: data,
-        queryParameters: queryParameters,
-        options: options,
-      );
-    } catch (e) {
-      rethrow;
-    }
+    return await _dio.post(
+      path,
+      data: data,
+      queryParameters: queryParameters,
+      options: options,
+    );
   }
-  
-  // PUT request
+
   Future<Response> put(
     String path, {
     dynamic data,
     Map<String, dynamic>? queryParameters,
     Options? options,
   }) async {
-    try {
-      return await _dio.put(
-        path,
-        data: data,
-        queryParameters: queryParameters,
-        options: options,
-      );
-    } catch (e) {
-      rethrow;
-    }
+    return await _dio.put(
+      path,
+      data: data,
+      queryParameters: queryParameters,
+      options: options,
+    );
   }
-  
-  // DELETE request
+
   Future<Response> delete(
     String path, {
     dynamic data,
     Map<String, dynamic>? queryParameters,
     Options? options,
   }) async {
-    try {
-      return await _dio.delete(
-        path,
-        data: data,
-        queryParameters: queryParameters,
-        options: options,
-      );
-    } catch (e) {
-      rethrow;
-    }
+    return await _dio.delete(
+      path,
+      data: data,
+      queryParameters: queryParameters,
+      options: options,
+    );
   }
 }

@@ -2,14 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../core/services/business_service.dart';
-import '../../../core/services/location_service.dart';
+import '../providers.dart';
 import '../../../shared/models/business.dart';
 
-// Provider for business list
+// Business list uses same search location as home (saved address or device)
 final businessListProvider = FutureProvider<List<Business>>((ref) async {
-  final locationService = LocationService();
-  final location = await locationService.getCurrentLocation();
-  
+  final location = await ref.watch(customerSearchLocationProvider.future);
   final businessService = ref.watch(businessServiceProvider);
   return await businessService.findNearbyBusinesses(
     latitude: location['latitude']!,
@@ -59,10 +57,10 @@ class BusinessListScreen extends ConsumerWidget {
                   margin: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
                   child: ListTile(
                     leading: CircleAvatar(
-                      backgroundColor: Colors.blue[100],
+                      backgroundColor: Theme.of(context).colorScheme.primary.withOpacity(0.15),
                       child: Icon(
                         Icons.store,
-                        color: Colors.blue[700],
+                        color: Theme.of(context).colorScheme.primary,
                       ),
                     ),
                     title: Text(
